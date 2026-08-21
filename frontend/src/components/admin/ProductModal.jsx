@@ -68,9 +68,16 @@ const ProductModal = ({ show, isCreate, onHide, product }) => {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const res = await uploadProductImage(formData).unwrap();
+      let res;
+      if (isCreate) {
+        res = await uploadProductImage(formData).unwrap();
+      } else {
+        formData.append("product", JSON.stringify(product));
+        res = await uploadProductImage(formData).unwrap();
+      }
       toast.success(res.message);
       handleInputChange("image", res.image);
+      console.log(res.image);
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }

@@ -1,5 +1,9 @@
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
+import s3 from "../config/s3.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import Product from "../models/productModel.js";
+import dotenv from "dotenv"
+dotenv.config()
 
 // @desc    Fetch all products
 // @route   GET /api/products
@@ -152,12 +156,32 @@ const updateProduct = asyncHandler(async (req, res) => {
 const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
-  if (product) {
-    await Product.deleteOne({ _id: req.params.id });
-    res.json({ message: "Product removed" });
-  } else {
+  if (!product) {
     res.status(404);
     throw new Error("Product not found");
+  }
+
+  try {
+    // Delete image from S3
+    if (product.image) {
+      const imageUrl = new URL(product.image);
+      const key = decodeURIComponent(imageUrl.pathname.substring(1));
+
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: process.env.AWS_S3_BUCKET_NAME,
+          Key: key,
+        })
+      );
+    }
+
+    // Delete product from MongoDB
+    await Product.deleteOne({ _id: req.params.id });
+
+    res.json({ message: "Product removed" });
+  } catch (error) {
+    res.status(500);
+    throw error;
   }
 });
 

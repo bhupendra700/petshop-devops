@@ -11,7 +11,7 @@ const AdminOrders = () => {
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (
-        <p>{error}</p>
+        <p>{error?.data?.message || error?.error || "Something went wrong"}</p>
       ) : !orders || orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
@@ -50,7 +50,10 @@ const AdminOrders = () => {
                     )}
                   </td>
                   <td>
-                    <Link to={`/admin/orders/${order._id}`} className="text-primary">
+                    <Link
+                      to={`/admin/orders/${order._id}`}
+                      className="text-primary"
+                    >
                       Details
                     </Link>
                   </td>
