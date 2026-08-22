@@ -9,12 +9,21 @@ import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import cors from "cors";
 
 const port = process.env.PORT || 5000;
 
 connectDB();
 
 const app = express();
+
+// Allow requests from your React frontend
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 
 // body parser middleware
 app.use(express.json());
@@ -29,7 +38,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/upload", uploadRoutes);
 
 app.get("/api/config/paypal", (req, res) =>
-  res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
+  res.send({ clientId: process.env.PAYPAL_CLIENT_ID }),
 );
 
 const __dirname = path.resolve(); // set __dirname to the absolute path of the directory containing the source file
@@ -39,7 +48,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/frontend/build")));
 
   app.get("*", (req, res) =>
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"))
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html")),
   );
 } else {
   app.get("/", (req, res) => {
