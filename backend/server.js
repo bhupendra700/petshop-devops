@@ -10,10 +10,9 @@ import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import cors from "cors";
+import seedAdmin from "./config/seedAdmin.js";
 
 const port = process.env.PORT || 5000;
-
-connectDB();
 
 const app = express();
 
@@ -59,4 +58,18 @@ if (process.env.NODE_ENV === "production") {
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+const startServer = async () => {
+  try {
+    await connectDB();
+    await seedAdmin();
+
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Server startup failed:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
