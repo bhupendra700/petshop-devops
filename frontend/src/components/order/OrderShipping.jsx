@@ -5,23 +5,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { saveShippingAddress } from "../../slices/cartSlice";
 
 const OrderShipping = () => {
-  const cart = useSelector((state) => state.cart);
-  const { shippingAddress } = cart;
+const cart = useSelector((state) => state.cart);
+const userInfo = useSelector((state) => state.auth.userInfo);
 
-  const userInfo = useSelector((state) => state.auth.userInfo);
+const shippingAddress = cart.shippingAddress || {};
+const defaultAddress = userInfo?.shippingAddress || {};
 
-  const { shippingAddress: defaultAddress } = userInfo;
+const [enteredValues, setEnteredValues] = useState({
+  firstName: shippingAddress.firstName || defaultAddress.firstName || "",
+  lastName: shippingAddress.lastName || defaultAddress.lastName || "",
+  address: shippingAddress.address || defaultAddress.address || "",
+  city: shippingAddress.city || defaultAddress.city || "",
+  postalCode: shippingAddress.postalCode || defaultAddress.postalCode || "",
+  country: shippingAddress.country || defaultAddress.country || "",
+});
 
-  const [enteredValues, setEnteredValues] = useState({
-    firstName: shippingAddress.firstName || defaultAddress.firstName || "",
-    lastName: shippingAddress.lastName || defaultAddress.lastName || "",
-    address: shippingAddress.address || defaultAddress.address || "",
-    city: shippingAddress.city || defaultAddress.city || "",
-    postalCode: shippingAddress.postalCode || defaultAddress.postalCode || "",
-    country: shippingAddress.country || defaultAddress.country || "",
-  });
-
-  const [isSaved, setIsSaved] = useState(shippingAddress.isSaved || false);
+const [isSaved, setIsSaved] = useState(
+  Boolean(shippingAddress.isSaved)
+);
 
   const getLable = (key) => {
     return key
