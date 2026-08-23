@@ -11,6 +11,7 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import cors from "cors";
 import seedAdmin from "./config/seedAdmin.js";
+import seedProducts from "./config/seedProducts.js";
 
 const port = process.env.PORT || 5000;
 
@@ -61,7 +62,9 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDB();
+
     await seedAdmin();
+    await seedProducts();
 
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
