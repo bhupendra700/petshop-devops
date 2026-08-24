@@ -18,9 +18,11 @@ const port = process.env.PORT || 5000;
 const app = express();
 
 // Allow requests from your React frontend
+const originUrl = process.env.CLIENT_URL ? process.env.CLIENT_URL : true;
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: originUrl,
     credentials: true,
   }),
 );

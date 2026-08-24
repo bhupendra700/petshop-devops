@@ -1,5 +1,7 @@
 import crypto from "crypto";
+import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import dotenv from "dotenv";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
@@ -9,12 +11,24 @@ import s3 from "./s3.js";
 
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// backend/productSeedImages
+const productSeedImages = path.join(
+  __dirname,
+  "..",
+  "productSeedImages"
+);
+
 const seedProducts = async () => {
   // Check if products already exist
   const productCount = await Product.countDocuments();
 
   if (productCount > 0) {
-    console.log("Products already exist. Skipping product seeding.");
+    console.log(
+      "Products already exist. Skipping product seeding."
+    );
     return;
   }
 
@@ -32,7 +46,7 @@ const seedProducts = async () => {
       isOnSale: false,
       salePrice: 0,
       isPopular: true,
-      imageUrl: "https://loremflickr.com/600/600/dog,collar",
+      image: "premium-dog-collar.jpg",
     },
     {
       name: "Adjustable Dog Leash",
@@ -45,7 +59,7 @@ const seedProducts = async () => {
       isOnSale: false,
       salePrice: 0,
       isPopular: true,
-      imageUrl: "https://loremflickr.com/600/600/dog,leash",
+      image: "adjustable-dog-leash.jpg",
     },
     {
       name: "Cute Dog Cap",
@@ -58,7 +72,7 @@ const seedProducts = async () => {
       isOnSale: true,
       salePrice: 299,
       isPopular: false,
-      imageUrl: "https://loremflickr.com/600/600/dog,cap",
+      image: "cute-dog-cap.jpg",
     },
     {
       name: "Winter Dog Hoodie",
@@ -71,7 +85,7 @@ const seedProducts = async () => {
       isOnSale: false,
       salePrice: 0,
       isPopular: true,
-      imageUrl: "https://loremflickr.com/600/600/dog,hoodie",
+      image: "winter-dog-hoodie.jpg",
     },
     {
       name: "Dog Raincoat",
@@ -84,7 +98,7 @@ const seedProducts = async () => {
       isOnSale: true,
       salePrice: 699,
       isPopular: false,
-      imageUrl: "https://loremflickr.com/600/600/dog,raincoat",
+      image: "dog-raincoat.jpg",
     },
     {
       name: "Interactive Dog Ball",
@@ -97,7 +111,7 @@ const seedProducts = async () => {
       isOnSale: false,
       salePrice: 0,
       isPopular: true,
-      imageUrl: "https://loremflickr.com/600/600/dog,toy",
+      image: "interactive-dog-ball.jpg",
     },
     {
       name: "Healthy Dog Treats",
@@ -110,7 +124,7 @@ const seedProducts = async () => {
       isOnSale: true,
       salePrice: 199,
       isPopular: true,
-      imageUrl: "https://loremflickr.com/600/600/dog,treat",
+      image: "healthy-dog-treats.jpg",
     },
     {
       name: "Soft Dog Bed",
@@ -123,7 +137,7 @@ const seedProducts = async () => {
       isOnSale: false,
       salePrice: 0,
       isPopular: true,
-      imageUrl: "https://loremflickr.com/600/600/dog,bed",
+      image: "soft-dog-bed.jpg",
     },
     {
       name: "Stainless Steel Dog Bowl",
@@ -136,7 +150,7 @@ const seedProducts = async () => {
       isOnSale: false,
       salePrice: 0,
       isPopular: false,
-      imageUrl: "https://loremflickr.com/600/600/dog,bowl",
+      image: "stainless-steel-dog-bowl.jpg",
     },
     {
       name: "Dog Birthday Party Set",
@@ -149,28 +163,43 @@ const seedProducts = async () => {
       isOnSale: true,
       salePrice: 549,
       isPopular: false,
-      imageUrl: "https://loremflickr.com/600/600/dog,birthday",
+      image: "dog-birthday-party-set.jpg",
     },
   ];
 
   for (const productData of products) {
     try {
-      // Download image
-      const response = await fetch(productData.imageUrl);
+      // Local image path
+      const imagePath = path.join(
+        productSeedImages,
+        productData.image
+      );
 
-      if (!response.ok) {
+      // Check if image exists
+      if (!fs.existsSync(imagePath)) {
         throw new Error(
-          `Failed to download image: ${productData.imageUrl}`
+          `Image not found: ${imagePath}`
         );
       }
 
-      const imageBuffer = Buffer.from(await response.arrayBuffer());
+      // Read local image
+      const imageBuffer = fs.readFileSync(imagePath);
 
-      const contentType =
-        response.headers.get("content-type") || "image/jpeg";
+      // Get extension
+      const extension = path.extname(
+        productData.image
+      );
 
-      const extension = contentType.includes("png") ? ".png" : ".jpg";
+      // Content type
+      let contentType = "image/jpeg";
 
+      if (extension === ".png") {
+        contentType = "image/png";
+      } else if (extension === ".webp") {
+        contentType = "image/webp";
+      }
+
+      // Generate unique S3 filename
       const fileName = `${crypto.randomUUID()}${extension}`;
 
       // Upload image to S3
@@ -184,7 +213,9 @@ const seedProducts = async () => {
       );
 
       // Generate S3 URL
-      const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+      const imageUrl =
+        `https://${process.env.AWS_S3_BUCKET_NAME}.s3.` +
+        `${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 
       // Create product in MongoDB
       await Product.create({
@@ -200,7 +231,9 @@ const seedProducts = async () => {
         isPopular: productData.isPopular,
       });
 
-      console.log(`Product created: ${productData.name}`);
+      console.log(
+        `Product created: ${productData.name}`
+      );
     } catch (error) {
       console.error(
         `Failed to seed product "${productData.name}":`,
