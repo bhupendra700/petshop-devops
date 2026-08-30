@@ -9,8 +9,9 @@ dotenv.config()
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const pageSize = req.query.pageSize || undefined;
-  const page = Number(req.query.pageNumber) || 1;
+  // Safe default value set ki hai taaki NaN multiply na ho
+  const pageSize = Number(req.query.pageSize) || 10;
+  const page = Math.max(1, Number(req.query.pageNumber) || 1);
 
   const {
     keyword: keywordQuery,
@@ -48,10 +49,14 @@ const getProducts = asyncHandler(async (req, res) => {
   }
 
   const count = await Product.countDocuments({ ...keyword });
+
+  // Math.max(0, ...) se ensure hoga ki skip zero ya positive hi ho
+  const skip = Math.max(0, pageSize * (page - 1));
+
   const products = await Product.find({ ...keyword })
     .sort(sortParam)
     .limit(pageSize)
-    .skip(pageSize * (page - 1));
+    .skip(skip);
 
   res.json({ products, page, pages: Math.ceil(count / pageSize) });
 });
