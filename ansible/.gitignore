@@ -1,0 +1,12 @@
+# Ansible retry files
+*.retry
+
+# Ansible log files
+*.log
+
+# Ansible Vault password file (if kept locally)
+.vault_pass
+.vault_password
+
+# Temporary files
+.cache/

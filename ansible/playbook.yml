@@ -1,0 +1,60 @@
+---
+- name: Configure Petshop Server
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-compose-v2
+          - git
+        state: present
+
+    - name: Start Docker
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add 'ubuntu' user to the 'docker' group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Clone petshop-devops repository
+      ansible.builtin.git:
+        repo: https://github.com/bhupendra700/petshop-devops.git
+        dest: /home/ubuntu/petshop-devops
+        single_branch: yes
+        version: main
+
+    - name: Copy backend environment configuration file
+      ansible.builtin.copy:
+        src: ../backend/.env
+        dest: /home/ubuntu/petshop-devops/backend/.env
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
+
+    - name: Copy frontend environment configuration file
+      ansible.builtin.copy:
+        src: ../frontend/.env
+        dest: /home/ubuntu/petshop-devops/frontend/.env
+        owner: ubuntu
+        group: ubuntu
+        mode: "0644"
+
+    - name: Run docker compose build without cache and start containers in background
+      community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/petshop-devops
+        state: present
+        build: always
+        recreate: always
+      register: output
