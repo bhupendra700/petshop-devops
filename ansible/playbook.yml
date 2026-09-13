@@ -1,6 +1,6 @@
 ---
 - name: Configure Petshop Server
-  hosts: webservers
+  hosts: apps
   become: true
 
   tasks:
@@ -14,6 +14,7 @@
           - docker.io
           - docker-compose-v2
           - git
+          - awscli
         state: present
 
     - name: Start Docker
@@ -35,20 +36,24 @@
         single_branch: yes
         version: main
 
-    - name: Copy backend environment configuration file
-      ansible.builtin.copy:
-        src: ../backend/.env
-        dest: /home/ubuntu/petshop-devops/backend/.env
-        owner: ubuntu
-        group: ubuntu
-        mode: "0644"
+    - name: Create backend .env from Secrets Manager
+      ansible.builtin.shell: |
+        aws secretsmanager get-secret-value \
+          --secret-id petshop/prod/backend \
+          --region us-east-1 \
+          --query SecretString \
+          --output text | python3 -c '
+        import sys, json
+        data = json.load(sys.stdin)
+        print("\n".join(f"{k}={v}" for k,v in data.items()))
+        ' > /home/ubuntu/petshop-devops/backend/.env
+      become: true
+      no_log: true
 
-    - name: Copy frontend environment configuration file
-      ansible.builtin.copy:
-        src: ../frontend/.env
-        dest: /home/ubuntu/petshop-devops/frontend/.env
-        owner: ubuntu
-        group: ubuntu
+    - name: Create frontend .env file
+      ansible.builtin.file:
+        path: /home/ubuntu/petshop-devops/frontend/.env
+        state: touch
         mode: "0644"
 
     - name: Run docker compose build without cache and start containers in background
