@@ -42,8 +42,3 @@ output "target_group_arn" {
   description = "ARN of the ALB target group"
   value       = module.alb.target_group_arn
 }
-
-output "s3_bucket_name" {
-  description = "S3 bucket name"
-  value       = var.s3_bucket_name
-}

@@ -96,7 +96,7 @@ module "alb" {
 module "s3" {
   source = "./modules/s3"
 
-  s3_bucket_name = var.s3_bucket_name
+  s3_bucket_name = "petshop-image-bhupendra-yadav"
 }
 
 resource "local_file" "ansible_inventory" {
