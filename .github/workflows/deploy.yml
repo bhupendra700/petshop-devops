@@ -15,17 +15,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      # YAHAN add karna hai
-      - name: Debug GitHub OIDC
+      - name: Get OIDC Claims
         run: |
-          echo "Repository: $GITHUB_REPOSITORY"
-          echo "Ref: $GITHUB_REF"
-          echo "Workflow: $GITHUB_WORKFLOW"
+          TOKEN=$(curl -sS \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
+            | jq -r '.value')
 
-      - name: Debug OIDC Claims
-        uses: github/actions-oidc-debugger@main
-        with:
-          audience: sts.amazonaws.com
+          PAYLOAD=$(echo "$TOKEN" | cut -d '.' -f2 | base64 -d 2>/dev/null)
+
+          echo "$PAYLOAD" | jq '{sub, aud}'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
