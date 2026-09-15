@@ -32,7 +32,10 @@ resource "aws_default_security_group" "vpc_default_sg" {
 
 resource "aws_default_network_acl" "vpc_default_nacl" {
   default_network_acl_id = aws_vpc.petshop_vpc.default_network_acl_id
-
+  subnet_ids = concat(
+    aws_subnet.public_subnet[*].id,
+    aws_subnet.private_subnet[*].id
+  )
   ingress {
     protocol   = -1
     rule_no    = 100
