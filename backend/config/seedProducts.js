@@ -34,12 +34,12 @@ const seedProducts = async () => {
 
   console.log("No products found. Seeding 10 products...");
 
- const products = [
+const products = [
   {
     name: "Premium Dog Collar",
     price: 499,
     countInStock: 25,
-    category: "Accessories",
+    category: "toys",
     description:
       "Comfortable and adjustable premium collar for everyday use.",
     isPublished: true,
@@ -52,7 +52,7 @@ const seedProducts = async () => {
     name: "Adjustable Dog Leash",
     price: 699,
     countInStock: 20,
-    category: "Accessories",
+    category: "toys",
     description:
       "Strong and durable adjustable leash for daily walks and outdoor activities.",
     isPublished: true,
@@ -65,7 +65,7 @@ const seedProducts = async () => {
     name: "Cute Dog Cap",
     price: 349,
     countInStock: 15,
-    category: "Clothing",
+    category: "holidays",
     description:
       "Cute and comfortable cap designed to protect your dog from sunlight.",
     isPublished: true,
@@ -78,7 +78,7 @@ const seedProducts = async () => {
     name: "Winter Dog Hoodie",
     price: 899,
     countInStock: 12,
-    category: "Clothing",
+    category: "holidays",
     description:
       "Warm and comfortable hoodie for dogs during cold weather.",
     isPublished: true,
@@ -91,7 +91,7 @@ const seedProducts = async () => {
     name: "Dog Raincoat",
     price: 799,
     countInStock: 10,
-    category: "Clothing",
+    category: "holidays",
     description:
       "Water-resistant raincoat that keeps your dog comfortable during rainy walks.",
     isPublished: true,
@@ -104,7 +104,7 @@ const seedProducts = async () => {
     name: "Interactive Dog Ball",
     price: 299,
     countInStock: 30,
-    category: "Toys",
+    category: "toys",
     description:
       "Durable interactive ball designed to keep dogs active and entertained.",
     isPublished: true,
@@ -117,7 +117,7 @@ const seedProducts = async () => {
     name: "Healthy Dog Treats",
     price: 249,
     countInStock: 40,
-    category: "Treats",
+    category: "treats",
     description:
       "Tasty dog treats made for rewarding your pet during training.",
     isPublished: true,
@@ -130,7 +130,7 @@ const seedProducts = async () => {
     name: "Soft Dog Bed",
     price: 1499,
     countInStock: 8,
-    category: "Beds",
+    category: "holidays",
     description:
       "Soft and comfortable bed that gives your dog a cozy place to rest.",
     isPublished: true,
@@ -143,7 +143,7 @@ const seedProducts = async () => {
     name: "Stainless Steel Dog Bowl",
     price: 599,
     countInStock: 18,
-    category: "Feeding",
+    category: "toys",
     description:
       "Durable stainless steel bowl suitable for food and water.",
     isPublished: true,
@@ -156,7 +156,7 @@ const seedProducts = async () => {
     name: "Dog Birthday Party Set",
     price: 649,
     countInStock: 14,
-    category: "Holidays",
+    category: "holidays",
     description:
       "Fun birthday accessories for celebrating your dog's special day.",
     isPublished: true,
