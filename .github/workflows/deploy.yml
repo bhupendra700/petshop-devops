@@ -4,7 +4,7 @@ name: Terraform Apply
 #   push:
 #     branches:
 #       - main
-on
+on:
   workflow_dispatch:
 
 permissions:

@@ -9,7 +9,7 @@ name: CI
 #     branches:
 #       - main
 
-on
+on:
   workflow_dispatch:
 
 jobs:
