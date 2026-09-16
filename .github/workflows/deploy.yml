@@ -40,7 +40,8 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh 
-          printf '%s\n' "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/ec2-instance
+          printf '%s\n' "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/ec2-instance.pem
+          chmod 600 ~/.ssh/ec2-instance.pem
 
       - name: Install Ansible
         run: |
