@@ -48,6 +48,10 @@ const OrderDetails = () => {
     order &&
     (order?.user?._id === userInfo?._id || isInAdmin);
 
+  // -----------------------------
+  // PAY ORDER
+  // -----------------------------
+
   const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
 
   const payHandler = async () => {
@@ -58,23 +62,35 @@ const OrderDetails = () => {
     try {
       await payOrder({
         orderId,
-        details: { payer: {} },
+        details: {
+          payer: {},
+        },
       }).unwrap();
 
       await refetch();
 
       toast.success("Order is paid");
     } catch (err) {
-      toast.error(err?.data?.message || err?.error || "Failed to update order");
+      toast.error(
+        err?.data?.message ||
+          err?.error ||
+          "Failed to update order"
+      );
     }
   };
+
+  // -----------------------------
+  // DELIVER ORDER
+  // -----------------------------
 
   const [deliverOrder, { isLoading: loadingDeliver }] =
     useDeliverOrderMutation();
 
   const deliverHandler = async () => {
     if (
-      !window.confirm("Are you sure you want to mark this order as delivered?")
+      !window.confirm(
+        "Are you sure you want to mark this order as delivered?"
+      )
     ) {
       return;
     }
@@ -87,19 +103,32 @@ const OrderDetails = () => {
       toast.success("Order is delivered");
     } catch (err) {
       toast.error(
-        err?.data?.message || err?.error || "Failed to update order"
+        err?.data?.message ||
+          err?.error ||
+          "Failed to update order"
       );
     }
   };
 
-  const onPaidHandler = () => {
-    refetch();
+  // -----------------------------
+  // PAYPAL PAYMENT
+  // -----------------------------
+
+  const onPaidHandler = async () => {
+    await refetch();
   };
 
-  const isShowPayPalBtn = order && !order.isPaid && !isInAdmin;
+  const isShowPayPalBtn =
+    order && !order.isPaid && !isInAdmin;
+
+  // -----------------------------
+  // UI
+  // -----------------------------
 
   return (
     <div className="order-details">
+      {/* Header */}
+
       {isInAdmin ? (
         <h6 className="fw-bold text-primary mt-3">
           <Link
@@ -108,11 +137,15 @@ const OrderDetails = () => {
           >
             <FaAngleLeft />
           </Link>
+
           Order Details
         </h6>
       ) : (
         <h6 className="fw-bold text-primary">
-          <Link to="/account" className="text-primary back-link">
+          <Link
+            to="/account"
+            className="text-primary back-link"
+          >
             Purchase History
           </Link>
 
@@ -123,23 +156,42 @@ const OrderDetails = () => {
       )}
 
       <div>
-        {isLoading && <p>Loading Order Details...</p>}
+        {/* Loading */}
+
+        {isLoading && (
+          <p>Loading Order Details...</p>
+        )}
+
+        {/* Error */}
 
         {error ? (
           <p>
-            Error: {error?.data?.message || error?.error || "Something went wrong"}
+            Error:{" "}
+            {error?.data?.message ||
+              error?.error ||
+              "Something went wrong"}
           </p>
         ) : (
           isNotAuthorized && (
-            <p>You are not authorized to view this order</p>
+            <p>
+              You are not authorized to view this order
+            </p>
           )
         )}
 
+        {/* Order Details */}
+
         {isAuthorized && (
           <div>
+            {/* Order Date */}
+
             <p className="mt-3">
-              <span className="text-black-50">Ordered on</span>{" "}
+              <span className="text-black-50">
+                Ordered on
+              </span>{" "}
+
               {order.createdAt.substring(0, 10)}
+
               &nbsp;&nbsp;
 
               <span className="text-black-50">
@@ -149,12 +201,18 @@ const OrderDetails = () => {
               {orderId}
             </p>
 
+            {/* Order Information */}
+
             <Card className="p-3">
               <Row>
+                {/* User + Shipping */}
+
                 <Col>
                   {isInAdmin && order.user && (
                     <>
-                      <h6 className="order-lable">User Info</h6>
+                      <h6 className="order-lable">
+                        User Info
+                      </h6>
 
                       <p>
                         Name:{" "}
@@ -177,7 +235,9 @@ const OrderDetails = () => {
                     </>
                   )}
 
-                  <h6 className="order-lable">Shipping Address</h6>
+                  <h6 className="order-lable">
+                    Shipping Address
+                  </h6>
 
                   <p>
                     {order.shippingAddress.firstName}{" "}
@@ -193,8 +253,12 @@ const OrderDetails = () => {
                   </p>
                 </Col>
 
+                {/* Order Summary */}
+
                 <Col>
-                  <h6 className="order-lable">Order Summary</h6>
+                  <h6 className="order-lable">
+                    Order Summary
+                  </h6>
 
                   <div>
                     <p>
@@ -212,18 +276,33 @@ const OrderDetails = () => {
                   </div>
                 </Col>
 
+                {/* Payment + Status */}
+
                 <Col>
-                  <h6 className="order-lable">Payment Method</h6>
+                  <h6 className="order-lable">
+                    Payment Method
+                  </h6>
 
-                  <p>{order.paymentMethod}</p>
+                  <p>
+                    {order.paymentMethod}
+                  </p>
 
-                  <h6 className="order-lable">Order Status</h6>
+                  <h6 className="order-lable">
+                    Order Status
+                  </h6>
+
+                  {/* Paid Status */}
 
                   {order.isPaid ? (
                     <div>
                       <FaCheck className="text-success me-2" />
 
-                      {`Paid on ${order.paidAt.substring(0, 10)}`}
+                      {order.paidAt
+                        ? `Paid on ${order.paidAt.substring(
+                            0,
+                            10
+                          )}`
+                        : "Paid"}
                     </div>
                   ) : (
                     <div>
@@ -233,11 +312,18 @@ const OrderDetails = () => {
                     </div>
                   )}
 
+                  {/* Delivered Status */}
+
                   {order.isDelivered ? (
                     <div>
                       <FaCheck className="text-success me-2" />
 
-                      {`Delivered on ${order.deliveredAt.substring(0, 10)}`}
+                      {order.deliveredAt
+                        ? `Delivered on ${order.deliveredAt.substring(
+                            0,
+                            10
+                          )}`
+                        : "Delivered"}
                     </div>
                   ) : (
                     <div>
@@ -246,6 +332,8 @@ const OrderDetails = () => {
                       Not Delivered
                     </div>
                   )}
+
+                  {/* PayPal */}
 
                   {isShowPayPalBtn && (
                     <PayPalPayment
@@ -256,6 +344,8 @@ const OrderDetails = () => {
                 </Col>
               </Row>
             </Card>
+
+            {/* Order Items */}
 
             <Card className="p-3 mt-4">
               <Table className="table table-striped table-hover table-style">
@@ -272,8 +362,12 @@ const OrderDetails = () => {
                 <tbody>
                   {order.orderItems.map((item) => (
                     <tr key={item.product}>
+                      {/* Image */}
+
                       <td style={{ width: "50px" }}>
-                        <Link to={`/product/${item.product}`}>
+                        <Link
+                          to={`/product/${item.product}`}
+                        >
                           <ImageContainer
                             src={item.image}
                             alt={item.name}
@@ -282,6 +376,8 @@ const OrderDetails = () => {
                           />
                         </Link>
                       </td>
+
+                      {/* Name */}
 
                       <td>
                         <Link
@@ -292,7 +388,13 @@ const OrderDetails = () => {
                         </Link>
                       </td>
 
-                      <td>{item.qty}</td>
+                      {/* Quantity */}
+
+                      <td>
+                        {item.qty}
+                      </td>
+
+                      {/* Price */}
 
                       <td>
                         {item.isOnSale ? (
@@ -306,18 +408,30 @@ const OrderDetails = () => {
                             </span>
                           </span>
                         ) : (
-                          <span>${item.price}</span>
+                          <span>
+                            ${item.price}
+                          </span>
                         )}
                       </td>
+
+                      {/* Total */}
 
                       <td>
                         {item.isOnSale ? (
                           <span>
-                            ${(item.qty * item.salePrice).toFixed(2)}
+                            $
+                            {(
+                              item.qty *
+                              item.salePrice
+                            ).toFixed(2)}
                           </span>
                         ) : (
                           <span>
-                            ${(item.qty * item.price).toFixed(2)}
+                            $
+                            {(
+                              item.qty *
+                              item.price
+                            ).toFixed(2)}
                           </span>
                         )}
                       </td>
@@ -327,27 +441,44 @@ const OrderDetails = () => {
               </Table>
             </Card>
 
+            {/* Admin Controls */}
+
             {isInAdmin && (
               <Card className="p-3 mt-4">
-                <h6 className="order-lable">Update Order Status</h6>
+                <h6 className="order-lable">
+                  Update Order Status
+                </h6>
 
                 <p className="mt-2 mb-0">
+                  {/* Mark As Paid */}
+
                   <Button
                     onClick={payHandler}
-                    disabled={loadingPay || order.isPaid}
+                    disabled={
+                      loadingPay || order.isPaid
+                    }
                     className="rounded-pill px-3 me-4"
                     size="sm"
                   >
-                    {loadingPay ? "Updating..." : "Mark As Paid"}
+                    {loadingPay
+                      ? "Updating..."
+                      : "Mark As Paid"}
                   </Button>
+
+                  {/* Mark As Delivered */}
 
                   <Button
                     onClick={deliverHandler}
-                    disabled={loadingDeliver || order.isDelivered}
+                    disabled={
+                      loadingDeliver ||
+                      order.isDelivered
+                    }
                     className="rounded-pill px-3"
                     size="sm"
                   >
-                    {loadingDeliver ? "Updating..." : "Mark As Delivered"}
+                    {loadingDeliver
+                      ? "Updating..."
+                      : "Mark As Delivered"}
                   </Button>
                 </p>
               </Card>
