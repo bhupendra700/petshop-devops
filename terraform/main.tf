@@ -37,7 +37,7 @@ module "alb" {
   public_subnet_ids  = module.vpc.public_subnet_ids
   target_group_name  = "simple-petshop-target-group"
   vpc_id             = module.vpc.vpc_id
-  ec2_ids            = module.ec2.private_ec2_ids
+  ec2_ids            = module.ec2.private_ec2_instance_ids
 }
 
 # 1. Project/App S3 Bucket (Public)
