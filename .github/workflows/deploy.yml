@@ -39,8 +39,11 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y ansible
-          python3 -m pip install boto3 botocore
+
           ansible-galaxy collection install amazon.aws
+          ansible-galaxy collection install community.docker
+
+          /opt/pipx/venvs/ansible-core/bin/python -m pip install boto3 botocore
 
       - name: Check Ansible SSM Plugin
         run: |
