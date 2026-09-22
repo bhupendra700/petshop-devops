@@ -23,11 +23,6 @@ output "private_ec2_sg_id" {
   value       = module.security_groups.private_ec2_sg_id
 }
 
-output "security_group_ids" {
-  description = "Security group IDs"
-  value       = module.security_groups.security_group_ids
-}
-
 output "private_ec2_private_ips" {
   description = "Private EC2 all private IP's"
   value       = module.ec2.private_ec2_private_ips
