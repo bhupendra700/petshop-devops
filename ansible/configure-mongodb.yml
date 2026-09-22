@@ -39,7 +39,7 @@
       community.docker.docker_compose_v2:
         project_src: /home/ubuntu/petshop-devops
         files:
-          - docker-compose.mongodb.yml
+          - docker-compose.mongo.yml
         state: present
         build: always
         recreate: always
