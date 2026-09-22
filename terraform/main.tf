@@ -72,5 +72,6 @@ resource "local_file" "ansible_inventory" {
     [mongodb:vars]
     ansible_connection=amazon.aws.aws_ssm
     ansible_aws_ssm_region=us-east-1
+    ansible_aws_ssm_bucket_name=petshop-ansible-ssm-temp-bucket
     EOT
 }
