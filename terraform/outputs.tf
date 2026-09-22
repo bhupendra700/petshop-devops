@@ -13,6 +13,16 @@ output "private_subnet_ids" {
   value       = module.vpc.private_subnet_ids
 }
 
+output "alb_sg_id" {
+  description = "Security group ID"
+  value       = module.security_groups.alb_sg_id
+}
+
+output "private_ec2_sg_id" {
+  description = "Security group ID"
+  value       = module.security_groups.private_ec2_sg_id
+}
+
 output "security_group_ids" {
   description = "Security group IDs"
   value       = module.security_groups.security_group_ids
@@ -21,11 +31,6 @@ output "security_group_ids" {
 output "private_ec2_private_ips" {
   description = "Private EC2 all private IP's"
   value       = module.ec2.private_ec2_private_ips
-}
-
-output "public_ec2_private_ips" {
-  description = "Public EC2 public IP"
-  value       = module.ec2.public_ec2_public_ips
 }
 
 output "alb_id" {

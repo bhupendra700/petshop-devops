@@ -1,6 +1,6 @@
-output "private_ec2_ids" {
+output "private_ec2_instance_ids" {
   description = "Bane hue saare Private EC2 Instances ki IDs"
-  value       = aws_instance.private_ec2[*].id
+  value = aws_instance.private_ec2[*].id
 }
 
 output "private_ec2_private_ips" {
