@@ -1,21 +1,26 @@
-resource "aws_security_group" "security_group" {
-  for_each = var.security_groups
-
-  name        = each.key
-  description = each.value.description
+resource "aws_security_group" "alb_sg" {
+  name        = "web-sg"
+  description = "Security group for alb"
   vpc_id      = var.vpc_id
 
-  dynamic "ingress" {
-    for_each = each.value.ingress
-
-    content {
-      from_port   = ingress.value.from_port
-      to_port     = ingress.value.to_port
-      protocol    = ingress.value.protocol
-      cidr_blocks = ingress.value.cidr_blocks
-    }
+  # Allow HTTP
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Allow HTTPS
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow all outbound traffic
   egress {
     from_port   = 0
     to_port     = 0
@@ -24,26 +29,32 @@ resource "aws_security_group" "security_group" {
   }
 
   tags = {
-    Name = each.key
+    Name = "alb_sg"
   }
 }
 
-resource "aws_security_group_rule" "alb_to_private_ec2" {
-  type      = "ingress"
-  from_port = 80
-  to_port   = 80
-  protocol  = "tcp"
+resource "aws_security_group" "simple_petshot_private_ec2_sg" {
+  name        = "simple_petshot_private_ec2_sg"
+  description = "Security group for Private EC2"
+  vpc_id      = var.vpc_id
 
-  security_group_id        = aws_security_group.security_group["simple_petshot_private_ec2_sg"].id
-  source_security_group_id = aws_security_group.security_group["alb-sg"].id
-}
+  ingress {
+    description     = "Allow traffic from ALB"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
+  }
 
-resource "aws_security_group_rule" "public_ec2_to_private_ec2_with_ssh" {
-  type      = "ingress"
-  from_port = 22
-  to_port   = 22
-  protocol  = "tcp"
+  # Allow all outbound traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-  security_group_id        = aws_security_group.security_group["simple_petshot_private_ec2_sg"].id
-  source_security_group_id = aws_security_group.security_group["simple_petshot_public_ec2_sg"].id
+  tags = {
+    Name = "simple_petshot_private_ec2_sg"
+  }
 }

@@ -1,0 +1,10 @@
+services:
+  database:
+    image: mongo:latest
+    container_name: mongodb-con
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data/db:/data/db
+      - ./mongo_data/configdb:/data/configdb

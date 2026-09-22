@@ -1,37 +1,21 @@
-variable "private_instance_type" {
+variable "instance_type" {
   type = string
 }
 
-variable "public_instance_type" {
-  type = string
-}
-
-variable "private_subnet_ids" {
+variable "subnet_ids" {
   type = list(string)
-}
-
-variable "public_subnet_id" {
-  type = string
 }
 
 variable "key_name" {
   type = string
 }
 
-variable "private_instance_security_group_id" {
+variable "security_group_id" {
   type = string
 }
 
-variable "public_instance_security_group_id" {
-  type = string
-}
-
-variable "private_ec2_name" {
-  type = string
-}
-
-variable "public_ec2_name" {
-  type = string
+variable "ec2_name" {
+  type = list(string)
 }
 
 variable "s3_bucket_arn" {

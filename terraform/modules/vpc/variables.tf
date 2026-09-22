@@ -28,12 +28,12 @@ variable "nat_gateway_name" {
 
 variable "public_subnet_name" {
   description = "Base prefix name for public subnets (e.g., public-subnet). Numbers like _1, _2 will be appended automatically."
-  type        = string
+  type        = list(string)
 }
 
 variable "private_subnet_name" {
   description = "Base prefix name for private subnets (e.g., private-subnet). Numbers like _1, _2 will be appended automatically."
-  type        = string
+  type        = list(string)
 }
 
 variable "public_subnet_cidrs" {

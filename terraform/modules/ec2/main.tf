@@ -18,6 +18,11 @@ resource "aws_iam_role" "private_ec2_role" {
   })
 }
 
+resource "aws_iam_role_policy_attachment" "ssm" {
+  role       = aws_iam_role.private_ec2_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
 resource "aws_iam_role_policy" "private_ec2_secrets" {
   name = "petshop-private-ec2-secrets"
   role = aws_iam_role.private_ec2_role.id
@@ -72,39 +77,19 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "private_ec2" {
-  count = length(var.private_subnet_ids)
+  count = length(var.subnet_ids)
 
   ami = data.aws_ami.ubuntu.id
 
-  instance_type = var.private_instance_type
-
-  subnet_id = var.private_subnet_ids[count.index]
-
-  key_name = var.key_name
+  instance_type = var.instance_type
+  subnet_id     = var.subnet_ids[count.index]
+  key_name      = var.key_name
 
   vpc_security_group_ids = [
-    var.private_instance_security_group_id
+    var.security_group_id
   ]
 
   iam_instance_profile = aws_iam_instance_profile.private_ec2_profile.name
 
-  tags = { Name = "${var.private_ec2_name}_${count.index + 1}" }
-}
-
-resource "aws_instance" "public_ec2" {
-  ami = data.aws_ami.ubuntu.id
-
-  instance_type = var.public_instance_type
-
-  subnet_id = var.public_subnet_id
-
-  key_name = var.key_name
-
-  associate_public_ip_address = true
-
-  vpc_security_group_ids = [
-    var.public_instance_security_group_id
-  ]
-
-  tags = { Name = var.public_ec2_name }
+  tags = { Name = var.ec2_name[count.index] }
 }

@@ -1,5 +1,5 @@
 ---
-- name: Configure Petshop Server
+- name: Configure Petshop App Servers
   hosts: apps
   become: true
 
@@ -23,7 +23,7 @@
         state: started
         enabled: true
 
-    - name: Add 'ubuntu' user to the 'docker' group
+    - name: Add ubuntu user to docker group
       ansible.builtin.user:
         name: ubuntu
         groups: docker
@@ -47,19 +47,17 @@
         data = json.load(sys.stdin)
         print("\n".join(f"{k}={v}" for k,v in data.items()))
         ' > /home/ubuntu/petshop-devops/backend/.env
-      become: true
       no_log: true
 
-    - name: Create frontend .env file
+    - name: Create frontend .env
       ansible.builtin.file:
         path: /home/ubuntu/petshop-devops/frontend/.env
         state: touch
         mode: "0644"
 
-    - name: Run docker compose build without cache and start containers in background
+    - name: Run application containers
       community.docker.docker_compose_v2:
         project_src: /home/ubuntu/petshop-devops
         state: present
         build: always
         recreate: always
-      register: output

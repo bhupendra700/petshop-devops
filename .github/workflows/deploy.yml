@@ -1,9 +1,5 @@
 name: Terraform Apply
 
-# on:
-#   push:
-#     branches:
-#       - main
 on:
   workflow_dispatch:
 
@@ -38,18 +34,26 @@ jobs:
       - name: Terraform Apply
         working-directory: terraform
         run: terraform apply -auto-approve
-      
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh 
-          printf '%s\n' "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/ec2-instance.pem
-          chmod 600 ~/.ssh/ec2-instance.pem
 
       - name: Install Ansible
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
+          sudo apt update
+          sudo apt install -y ansible
+          python3 -m pip install boto3 botocore
+          ansible-galaxy collection install amazon.aws
 
-      - name: Run Ansible
-        working-directory: ansible
-        run: ansible-playbook -i inventory.ini playbook.yml
+      - name: Check Ansible SSM Plugin
+        run: |
+          ansible-doc -t connection amazon.aws.aws_ssm
+
+      - name: Configure MongoDB
+        run: |
+          ansible-playbook \
+            -i ansible/inventory.ini \
+            ansible/configure-mongodb.yml
+
+      - name: Configure App Servers
+        run: |
+          ansible-playbook \
+            -i ansible/inventory.ini \
+            ansible/configure-apps.yml
