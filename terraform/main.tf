@@ -54,8 +54,12 @@ module "ansible_ssm_s3" {
   is_public      = false
 }
 
-data "mongodbatlas_project" "petshop" {
-  project_id = var.atlas_project_id
+module "mongodb" {
+  source = "./modules/mongodb"
+
+  project_id   = var.atlas_project_id
+  cluster_name = "petshop-prod"
+  region       = "US_EAST_1"
 }
 
 resource "local_file" "ansible_inventory" {
