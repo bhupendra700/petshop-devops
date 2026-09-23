@@ -94,6 +94,6 @@ jobs:
           TF_VAR_mongodb_atlas_public_key: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
           TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
           TF_VAR_atlas_project_id: ${{ secrets.MONGODB_ATLAS_PROJECT_ID }}
-           TF_VAR_mongodb_database_username: ${{ secrets.MONGODB_DATABASE_USERNAME }}
+          TF_VAR_mongodb_database_username: ${{ secrets.MONGODB_DATABASE_USERNAME }}
           TF_VAR_mongodb_database_password: ${{ secrets.MONGODB_DATABASE_PASSWORD }}
         run: terraform apply -auto-approve
