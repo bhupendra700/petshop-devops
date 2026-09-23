@@ -42,7 +42,3 @@ output "target_group_arn" {
   description = "ARN of the ALB target group"
   value       = module.alb.target_group_arn
 }
-
-output "atlas_project_name" {
-  value = data.mongodbatlas_project.petshop.name
-}
