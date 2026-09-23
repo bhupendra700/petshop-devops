@@ -42,3 +42,8 @@ output "target_group_arn" {
   description = "ARN of the ALB target group"
   value       = module.alb.target_group_arn
 }
+
+output "mongodb_connection_string" {
+  value     = module.mongodb.connection_string
+  sensitive = true
+}

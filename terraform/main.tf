@@ -65,6 +65,27 @@ module "mongodb" {
   database_password = var.mongodb_database_password
 }
 
+data "aws_secretsmanager_secret" "backend" {
+  name = "petshop/prod/backend"
+}
+
+data "aws_secretsmanager_secret_version" "backend" {
+  secret_id = data.aws_secretsmanager_secret.backend.id
+}
+
+resource "aws_secretsmanager_secret_version" "backend" {
+  secret_id = data.aws_secretsmanager_secret.backend.id
+
+  secret_string = jsonencode(
+    merge(
+      jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string),
+      {
+        MONGO_URI = module.mongodb.connection_string
+      }
+    )
+  )
+}
+
 resource "local_file" "ansible_inventory" {
   filename = "${path.root}/../ansible/inventory.ini"
 
