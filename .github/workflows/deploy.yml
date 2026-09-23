@@ -86,16 +86,12 @@ jobs:
 
       - name: Terraform Init
         working-directory: terraform
-        env:
-          TF_VAR_mongodb_atlas_public_key: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
-          TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
-          TF_VAR_atlas_project_id: ${{ secrets.MONGODB_ATLAS_PROJECT_ID }}
         run: terraform init
 
-      - name: Terraform Plan
+      - name: Terraform Apply
         working-directory: terraform
         env:
           TF_VAR_mongodb_atlas_public_key: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
           TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
           TF_VAR_atlas_project_id: ${{ secrets.MONGODB_ATLAS_PROJECT_ID }}
-        run: terraform plan
+        run: terraform apply -auto-approve
