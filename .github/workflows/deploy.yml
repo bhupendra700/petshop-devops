@@ -49,14 +49,8 @@ jobs:
         run: |
           ansible-doc -t connection amazon.aws.aws_ssm
 
-      - name: Configure MongoDB
-        run: |
-          ansible-playbook \
-            -i ansible/inventory.ini \
-            ansible/configure-mongodb.yml
-
       - name: Configure App Servers
         run: |
           ansible-playbook \
             -i ansible/inventory.ini \
-            ansible/configure-apps.yml
+            ansible/configure-project.yml
