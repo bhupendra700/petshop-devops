@@ -8,5 +8,10 @@ terraform {
     local = {
       source = "hashicorp/local"
     }
+
+    mongodbatlas = {
+      source  = "mongodb/mongodbatlas"
+      version = "~> 2.0"
+    }
   }
 }
