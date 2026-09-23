@@ -20,3 +20,15 @@ resource "mongodbatlas_advanced_cluster" "this" {
     }
   ]
 }
+
+resource "mongodbatlas_database_user" "this" {
+  project_id         = var.project_id
+  username           = var.database_username
+  password           = var.database_password
+  auth_database_name = "admin"
+
+  roles {
+    role_name     = "readWrite"
+    database_name = "petshop"
+  }
+}

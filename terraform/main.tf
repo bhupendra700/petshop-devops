@@ -60,6 +60,9 @@ module "mongodb" {
   project_id   = var.atlas_project_id
   cluster_name = "petshop-prod"
   region       = "US_EAST_1"
+
+  database_username = var.mongodb_database_username
+  database_password = var.mongodb_database_password
 }
 
 resource "local_file" "ansible_inventory" {
