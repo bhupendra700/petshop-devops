@@ -114,6 +114,11 @@ jobs:
         run: |
           ansible-doc -t connection amazon.aws.aws_ssm
 
+      - name: Check SSM Instances
+        run: |
+          aws ssm describe-instance-information \
+            --output table
+
       - name: Configure Project
         working-directory: ansible
         run: |
