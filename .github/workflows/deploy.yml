@@ -28,29 +28,15 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        working-directory: terraform
+        env:
+          TF_VAR_mongodb_atlas_public_key: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
+          TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
+          TF_VAR_atlas_project_id: ${{ secrets.MONGODB_ATLAS_PROJECT_ID }}
         run: terraform init
 
-      - name: Terraform Apply
-        working-directory: terraform
-        run: terraform apply -auto-approve
-
-      - name: Install Ansible
-        run: |
-          sudo apt update
-          sudo apt install -y ansible
-
-          ansible-galaxy collection install amazon.aws
-          ansible-galaxy collection install community.docker
-
-          /opt/pipx/venvs/ansible-core/bin/python -m pip install boto3 botocore
-
-      - name: Check Ansible SSM Plugin
-        run: |
-          ansible-doc -t connection amazon.aws.aws_ssm
-
-      - name: Configure App Servers
-        run: |
-          ansible-playbook \
-            -i ansible/inventory.ini \
-            ansible/configure-project.yml
+      - name: Terraform Plan
+        env:
+          TF_VAR_mongodb_atlas_public_key: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
+          TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
+          TF_VAR_atlas_project_id: ${{ secrets.MONGODB_ATLAS_PROJECT_ID }}
+        run: terraform plan
