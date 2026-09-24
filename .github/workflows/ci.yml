@@ -1,16 +1,13 @@
 name: CI
 
-# on:
-#   push:
-#     branches:
-#       - main
-
-#   pull_request:
-#     branches:
-#       - main
-
 on:
   workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  # pull_request:
+  #   branches:
+  #     - main
 
 jobs:
   frontend:
@@ -18,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
@@ -34,21 +31,21 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: npm run build
-        
+
   backend:
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Node
-      uses: actions/setup-node@v5
-      with:
-        node-version: 22
-        cache: npm
-        cache-dependency-path: backend/package-lock.json
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
 
-    - name: Install dependencies
-      working-directory: backend
-      run: npm ci
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
