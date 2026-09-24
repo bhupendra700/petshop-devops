@@ -13,6 +13,6 @@ output "private_subnet_ids" {
   value       = aws_subnet.private_subnet[*].id
 }
 
-output "nat_eip" {
-  value = aws_nat_gateway.nat_gateway.public_ip
+output "nat_addresses" {
+  value = aws_nat_gateway.nat_gateway.regional_nat_gateway_address
 }
