@@ -19,7 +19,6 @@ const ProductScreen = () => {
   const {
     data: product,
     error,
-    refetch,
     isLoading,
   } = useGetProductDetailsQuery(productId);
 
