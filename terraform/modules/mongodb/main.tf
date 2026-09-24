@@ -35,10 +35,7 @@ resource "mongodbatlas_database_user" "this" {
 
 resource "mongodbatlas_project_ip_access_list" "app_servers" {
 
-  for_each = {
-    for index, ip in var.nat_eips :
-    index => ip
-  }
+  for_each = var.nat_eips
 
   project_id = var.project_id
 
