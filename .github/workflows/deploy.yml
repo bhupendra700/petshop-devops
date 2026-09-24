@@ -1,66 +1,12 @@
-# name: Terraform Apply
-
-# on:
-#   workflow_dispatch:
-
-# permissions:
-#   id-token: write
-#   contents: read
-
-# jobs:
-#   terraform:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v5
-
-#       - name: Configure AWS credentials
-#         uses: aws-actions/configure-aws-credentials@v5
-#         with:
-#           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-#           aws-region: us-east-1
-
-#       - name: Check AWS Identity
-#         run: aws sts get-caller-identity
-
-#       - name: Setup Terraform
-#         uses: hashicorp/setup-terraform@v3
-
-#       - name: Terraform Init
-#         working-directory: terraform
-#         run: terraform init
-
-#       - name: Terraform Apply
-#         working-directory: terraform
-#         run: terraform apply -auto-approve
-
-#       - name: Install Ansible
-#         run: |
-#           sudo apt update
-#           sudo apt install -y ansible
-
-#           ansible-galaxy collection install amazon.aws
-#           ansible-galaxy collection install community.docker
-
-#           /opt/pipx/venvs/ansible-core/bin/python -m pip install boto3 botocore
-
-#       - name: Check Ansible SSM Plugin
-#         run: |
-#           ansible-doc -t connection amazon.aws.aws_ssm
-
-#       - name: Configure App Servers
-#         run: |
-#           ansible-playbook \
-#             -i ansible/inventory.ini \
-#             ansible/configure-project.yml
-
 name: Terraform Apply
 
+# on:
+#   push:
+#     branches:
+#       - main
+
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   id-token: write
