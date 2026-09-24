@@ -32,3 +32,9 @@ resource "mongodbatlas_database_user" "this" {
     database_name = "petshop"
   }
 }
+
+resource "mongodbatlas_project_ip_access_list" "app_servers" {
+  project_id = var.project_id
+  cidr_block = "${var.nat_eip}/32"
+  comment    = "PetShop private EC2 NAT Gateway"
+}

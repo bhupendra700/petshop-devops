@@ -12,3 +12,7 @@ output "private_subnet_ids" {
   description = "List of IDs of the private subnets"
   value       = aws_subnet.private_subnet[*].id
 }
+
+output "nat_eip" {
+  value = aws_eip.nat.public_ip
+}

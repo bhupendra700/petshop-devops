@@ -20,3 +20,7 @@ variable "database_password" {
   type      = string
   sensitive = true
 }
+
+variable "nat_eip" {
+  type = string
+}
