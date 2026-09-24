@@ -45,6 +45,9 @@ const ProductModal = ({ show, isCreate, onHide, product }) => {
     }
   }, [product]);
 
+  const [createProduct] =
+    useCreateProductMutation();
+
   const [updateProduct, { isLoading: loadingUpdate }] =
     useUpdateProductMutation();
 
