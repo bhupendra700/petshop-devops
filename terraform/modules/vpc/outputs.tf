@@ -14,5 +14,5 @@ output "private_subnet_ids" {
 }
 
 output "nat_eip" {
-  value = aws_eip.nat.public_ip
+  value = aws_nat_gateway.nat_gateway.public_ip
 }
