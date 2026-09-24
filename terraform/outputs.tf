@@ -47,7 +47,3 @@ output "mongodb_connection_string" {
   value     = module.mongodb.connection_string
   sensitive = true
 }
-
-output "nat_addresses" {
-  value = module.vpc.nat_addresses
-}

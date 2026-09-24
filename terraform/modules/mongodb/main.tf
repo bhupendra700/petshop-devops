@@ -33,8 +33,10 @@ resource "mongodbatlas_database_user" "this" {
   }
 }
 
-# resource "mongodbatlas_project_ip_access_list" "app_servers" {
-#   project_id = var.project_id
-#   cidr_block = "${var.nat_eip}/32"
-#   comment    = "PetShop private EC2 NAT Gateway"
-# }
+resource "mongodbatlas_project_ip_access_list" "app_servers" {
+  for_each = toset(var.nat_eips)
+
+  project_id = var.project_id
+  cidr_block = "${each.value}/32"
+  comment    = "PetShop NAT Gateway"
+}

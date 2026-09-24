@@ -21,6 +21,6 @@ variable "database_password" {
   sensitive = true
 }
 
-# variable "nat_eip" {
-#   type = string
-# }
+variable "nat_eips" {
+  type = list(string)
+}

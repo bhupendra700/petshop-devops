@@ -100,10 +100,6 @@ jobs:
           TF_VAR_mongodb_database_password: ${{ secrets.MONGODB_DATABASE_PASSWORD }}
         run: terraform apply -auto-approve
 
-      - name: Show NAT addresses
-        working-directory: terraform
-        run: terraform output nat_addresses
-
       - name: Install Ansible
         run: |
           sudo apt update
