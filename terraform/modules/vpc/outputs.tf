@@ -14,5 +14,8 @@ output "private_subnet_ids" {
 }
 
 output "nat_addresses" {
-  value = aws_nat_gateway.nat_gateway.regional_nat_gateway_address
+  value = [
+    for address in aws_nat_gateway.nat_gateway.regional_nat_gateway_address :
+    address.public_ip
+  ]
 }

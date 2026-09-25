@@ -64,10 +64,7 @@ module "mongodb" {
   database_username = var.mongodb_database_username
   database_password = var.mongodb_database_password
 
-  nat_eips = {
-  nat_1 = module.vpc.nat_addresses[0]
-  nat_2 = module.vpc.nat_addresses[1]
-}
+  nat_eips = module.vpc.nat_addresses
 }
 
 data "aws_secretsmanager_secret" "backend" {

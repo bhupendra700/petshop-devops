@@ -22,5 +22,5 @@ variable "database_password" {
 }
 
 variable "nat_eips" {
-  type = map(string)
+  type = list(string)
 }
