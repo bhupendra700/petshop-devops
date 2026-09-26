@@ -12,6 +12,10 @@ resource "aws_acm_certificate" "petshop" {
   }
 }
 
+resource "aws_route53_zone" "main" {
+  name = var.domain_name
+}
+
 resource "aws_route53_record" "cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.petshop.domain_validation_options :
