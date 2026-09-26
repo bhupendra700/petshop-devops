@@ -21,3 +21,7 @@ variable "vpc_id" {
 variable "ec2_ids" {
   type = list(string)
 }
+
+variable "domain_name" {
+  type = string
+}

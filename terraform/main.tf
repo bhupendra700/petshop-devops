@@ -38,6 +38,7 @@ module "alb" {
   target_group_name  = "simple-petshop-target-group"
   vpc_id             = module.vpc.vpc_id
   ec2_ids            = module.ec2.private_ec2_instance_ids
+  domain_name        = "bhupendrayadav.me"
 }
 
 # 1. Project/App S3 Bucket (Public)
