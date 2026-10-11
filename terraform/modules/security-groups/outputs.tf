@@ -4,10 +4,9 @@ output "alb_sg_id" {
 }
 
 output "ecs_security_group_id" {
-  value = aws_security_group.ecs.id
+  value = try(aws_security_group.ecs[0].id, null)
 }
 
 output "private_ec2_sg_id" {
-  description = "Security Group ID of Private EC2"
-  value       = aws_security_group.ec2_sg.id
+  value = try(aws_security_group.ec2_sg[0].id, null)
 }
