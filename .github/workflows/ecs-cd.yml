@@ -21,7 +21,7 @@ env:
 
 jobs:
   deploy:
-    name: Ubuntu Machine
+    name: Deploy on ECS
     runs-on: ubuntu-latest
 
     steps:
