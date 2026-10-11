@@ -1,3 +1,8 @@
+variable "project_name" {
+  type = string
+  default = "petshop"
+}
+
 variable "mongodb_atlas_public_key" {
   type      = string
   sensitive = true

@@ -1,6 +1,6 @@
 # 1. AWS Certificate Request
 resource "aws_acm_certificate" "petshop" {
-  domain_name       = "petshop.${var.domain_name}"
+  domain_name       = "${var.project_name}.${var.domain_name}"
   validation_method = "DNS"
 
   lifecycle {
@@ -10,7 +10,7 @@ resource "aws_acm_certificate" "petshop" {
 
 # 2. Existing Route 53 Zone Fetching
 data "aws_route53_zone" "main" {
-  name = var.domain_name 
+  name = var.domain_name
 }
 
 # 3. DNS Validation Record Create Karna
@@ -41,7 +41,7 @@ resource "aws_acm_certificate_validation" "petshop" {
 
 # 5. Application Load Balancer
 resource "aws_lb" "alb" {
-  name               = var.alb_name
+  name               = "${var.project_name}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [var.alb_security_group]
@@ -52,10 +52,23 @@ resource "aws_lb" "alb" {
 
 # 6. Target Group
 resource "aws_lb_target_group" "target_group_for_alb" {
-  name     = var.target_group_name
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = var.vpc_id
+  name        = "${var.project_name}-target-group"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = var.vpc_id
+  target_type = var.deployment_type == "ec2" ? "instance" : "ip"
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    interval            = 30
+    timeout             = 5
+    protocol            = "HTTP"
+    port                = "traffic-port"
+    path                = "/"
+    matcher             = "200"
+  }
 }
 
 # 7. HTTP Listener (Port 80 to 443 Redirect)
@@ -91,7 +104,8 @@ resource "aws_lb_listener" "https_front_end" {
 
 # 9. Target Group Attachment (EC2 Instances)
 resource "aws_alb_target_group_attachment" "ec2" {
-  count            = length(var.ec2_ids)
+  count = var.deployment_type == "ec2" ? length(var.ec2_ids) : 0
+
   target_group_arn = aws_lb_target_group.target_group_for_alb.arn
   target_id        = var.ec2_ids[count.index]
   port             = 80
@@ -100,7 +114,7 @@ resource "aws_alb_target_group_attachment" "ec2" {
 # 10. Route 53 A Record (Domain ko ALB se point karna)
 resource "aws_route53_record" "alb_dns" {
   zone_id = data.aws_route53_zone.main.zone_id
-  name    = "petshop.${var.domain_name}"
+  name    = "${var.project_name}.${var.domain_name}"
   type    = "A"
 
   alias {

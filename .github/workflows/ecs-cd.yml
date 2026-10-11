@@ -1,0 +1,103 @@
+name: ECS CD
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "nginx/**"
+      - "frontend/**"
+      - "backend/**"
+      - ".github/workflows/ecs-cd.yml"
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECS_CLUSTER: petshop-cluster
+
+jobs:
+  deploy:
+    name: Build, Push and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Get AWS Account ID
+        id: aws-account
+        run: |
+          echo "account_id=$(aws sts get-caller-identity --query Account --output text)" >> "$GITHUB_OUTPUT"
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Nginx image
+        env:
+          REGISTRY: ${{ steps.aws-account.outputs.account_id }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          IMAGE_TAG: latest
+        run: |
+          docker build \
+            -f nginx/Dockerfile.ecs \
+            -t "$REGISTRY/petshop-nginx:$IMAGE_TAG" \
+            ./nginx
+          docker push "$REGISTRY/petshop-nginx:$IMAGE_TAG"
+
+      - name: Build and push Frontend image
+        env:
+          REGISTRY: ${{ steps.aws-account.outputs.account_id }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          IMAGE_TAG: latest
+        run: |
+          docker build \
+            -f frontend/Dockerfile \
+            -t "$REGISTRY/petshop-frontend:$IMAGE_TAG" \
+            ./frontend
+          docker push "$REGISTRY/petshop-frontend:$IMAGE_TAG"
+
+      - name: Build and push Backend image
+        env:
+          REGISTRY: ${{ steps.aws-account.outputs.account_id }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          IMAGE_TAG: latest
+        run: |
+          docker build \
+            -f backend/Dockerfile \
+            -t "$REGISTRY/petshop-backend:$IMAGE_TAG" \
+            ./backend
+          docker push "$REGISTRY/petshop-backend:$IMAGE_TAG"
+
+      - name: Redeploy Nginx service
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service petshop-nginx \
+            --force-new-deployment
+
+      - name: Redeploy Frontend service
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service petshop-frontend \
+            --force-new-deployment
+
+      - name: Redeploy Backend service
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service petshop-backend \
+            --force-new-deployment
+
+      - name: Wait for ECS services to stabilize
+        run: |
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services petshop-nginx petshop-frontend petshop-backend
