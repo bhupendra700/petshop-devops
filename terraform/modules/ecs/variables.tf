@@ -8,14 +8,17 @@ variable "execution_role_arn" {
 
 variable "nginx_image" {
   type = string
+  default = "nginx:latest"
 }
 
 variable "frontend_image" {
   type = string
+  default = "alphine:latest"
 }
 
 variable "backend_image" {
   type = string
+  default = "alpine:latest"
 }
 
 variable "backend_secret_arn" {

@@ -1,48 +1,48 @@
-# module "vpc" {
-#   source = "../modules/vpc"
+module "vpc" {
+  source = "../modules/vpc"
 
-#   vpc_cidr = "10.0.0.0/16"
-#   vpc_name = "petshop-vpc"
+  vpc_cidr = "10.0.0.0/16"
+  vpc_name = "petshop-vpc"
 
-#   availability_zone = [
-#     "ap-south-1a",
-#     "ap-south-1b"
-#   ]
+  availability_zone = [
+    "ap-south-1a",
+    "ap-south-1b"
+  ]
 
-#   public_subnet_cidrs = [
-#     "10.0.1.0/24",
-#     "10.0.2.0/24"
-#   ]
+  public_subnet_cidrs = [
+    "10.0.1.0/24",
+    "10.0.2.0/24"
+  ]
 
-#   private_subnet_cidrs = [
-#     "10.0.11.0/24",
-#     "10.0.12.0/24"
-#   ]
+  private_subnet_cidrs = [
+    "10.0.11.0/24",
+    "10.0.12.0/24"
+  ]
 
-#   public_subnet_name = [
-#     "petshop-public-subnet-1",
-#     "petshop-public-subnet-2"
-#   ]
+  public_subnet_name = [
+    "petshop-public-subnet-1",
+    "petshop-public-subnet-2"
+  ]
 
-#   private_subnet_name = [
-#     "petshop-private-subnet-1",
-#     "petshop-private-subnet-2"
-#   ]
+  private_subnet_name = [
+    "petshop-private-subnet-1",
+    "petshop-private-subnet-2"
+  ]
 
-#   igw_name         = "petshop-igw"
-#   nat_gateway_name = "petshop-nat"
-#   public_rt_name   = "petshop-public-rt"
-#   private_rt_name  = "petshop-private-rt"
-# }
+  igw_name         = "petshop-igw"
+  nat_gateway_name = "petshop-nat"
+  public_rt_name   = "petshop-public-rt"
+  private_rt_name  = "petshop-private-rt"
+}
 
-# module "security_group" {
-#   source = "../modules/security-groups"
+module "security_group" {
+  source = "../modules/security-groups"
 
-#   project_name = var.project_name
-#   vpc_id       = module.vpc.vpc_id
+  project_name = var.project_name
+  vpc_id       = module.vpc.vpc_id
 
-#   deployment_type = "ecs"
-# }
+  deployment_type = "ecs"
+}
 
 module "ecr" {
   source = "../modules/ecr"
@@ -80,29 +80,29 @@ module "ecr" {
 #   domain_name        = "bhupendrayadav.me"
 # }
 
-# module "mongodb" {
-#   source = "../modules/mongodb"
+module "mongodb" {
+  source = "../modules/mongodb"
 
-#   project_id   = var.atlas_project_id
-#   cluster_name = "petshop-prod"
-#   region       = "US_EAST_1"
+  project_id   = var.atlas_project_id
+  cluster_name = "petshop-prod"
+  region       = "US_EAST_1"
 
-#   database_username = var.mongodb_database_username
-#   database_password = var.mongodb_database_password
+  database_username = var.mongodb_database_username
+  database_password = var.mongodb_database_password
 
-#   nat_eips = module.vpc.nat_addresses
-# }
+  nat_eips = module.vpc.nat_addresses
+}
 
-# module "mongodb-secret-manager" {
-#   source = "../modules/secret-manager"
+module "mongodb-secret-manager" {
+  source = "../modules/secret-manager"
 
-#   secret_name = "petshop/prod/backend"
-#   mongodb_uri = module.mongodb.connection_string
-# }
+  secret_name = "petshop/prod/backend"
+  mongodb_uri = module.mongodb.connection_string
+}
 
-# module "iam" {
-#   source = "../modules/iam"
+module "iam" {
+  source = "../modules/iam"
 
-#   project_name       = var.project_name
-#   backend_secret_arn = module.mongodb-secret-manager.backend_secret_arn
-# }
+  project_name       = var.project_name
+  backend_secret_arn = module.mongodb-secret-manager.backend_secret_arn
+}
