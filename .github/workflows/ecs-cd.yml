@@ -45,8 +45,6 @@ jobs:
         working-directory: terraform/ecs
         run: terraform apply -auto-approve
 
-      -
-
 # jobs:
 #   deploy:
 #     name: Build, Push and Deploy
