@@ -5,8 +5,8 @@ module "vpc" {
   vpc_name = "petshop-vpc"
 
   availability_zone = [
-    "ap-south-1a",
-    "ap-south-1b"
+    "us-east-1a",
+    "us-east-1b"
   ]
 
   public_subnet_cidrs = [
