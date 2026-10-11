@@ -2,14 +2,14 @@ name: ECS CD
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "nginx/**"
-      - "frontend/**"
-      - "backend/**"
-      - ".github/workflows/ecs-cd.yml"
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "nginx/**"
+  #     - "frontend/**"
+  #     - "backend/**"
+  #     - ".github/workflows/ecs-cd.yml"
 
 permissions:
   contents: read
