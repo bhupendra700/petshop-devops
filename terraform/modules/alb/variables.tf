@@ -26,7 +26,3 @@ variable "project_name" {
 variable "deployment_type" {
   type = string
 }
-
-output "https_listener" {
-  value = aws_lb_listener.https_front_end
-}
