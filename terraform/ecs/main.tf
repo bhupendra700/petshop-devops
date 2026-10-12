@@ -35,7 +35,7 @@ module "vpc" {
   private_rt_name  = "petshop-private-rt"
 }
 
-module "security_group" {
+module "security_groups" {
   source = "../modules/security-groups"
 
   project_name = var.project_name
@@ -58,7 +58,7 @@ module "ecs" {
   execution_role_arn = module.iam.ecs_task_execution_role_arn
 
   private_subnet_ids    = module.vpc.private_subnet_ids
-  ecs_security_group_id = module.security_group.ecs_security_group_id
+  ecs_security_group_id = module.security_groups.ecs_security_group_id
 
   nginx_image    = "${module.ecr.nginx_repository_url}:latest"
   frontend_image = "${module.ecr.frontend_repository_url}:latest"
