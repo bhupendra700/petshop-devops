@@ -69,7 +69,7 @@ jobs:
           docker push $REGISTRY/petshop-frontend:$IMAGE_TAG
 
           echo "=== 3. Building and pushing Nginx ==="
-          docker build -t $REGISTRY/petshop-nginx:$IMAGE_TAG ./nginx
+          docker build -f ./nginx/Dockerfile.ecs -t $REGISTRY/petshop-nginx:$IMAGE_TAG ./nginx
           docker push $REGISTRY/petshop-nginx:$IMAGE_TAG
 
 # jobs:
