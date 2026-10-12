@@ -165,8 +165,8 @@ resource "aws_ecs_service" "frontend" {
   service_registries {
   registry_arn   = aws_service_discovery_service.frontend.arn
   container_name = "frontend"
-  container_port = 80
-}
+  # container_port = 3000
+  }
 }
 
 resource "aws_ecs_service" "backend" {
@@ -187,7 +187,7 @@ resource "aws_ecs_service" "backend" {
   service_registries {
   registry_arn   = aws_service_discovery_service.backend.arn
   container_name = "backend"
-  container_port = 5000
+  # container_port = 5000
   }
 }
 
