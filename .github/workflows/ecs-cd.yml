@@ -51,6 +51,27 @@ jobs:
           TF_VAR_mongodb_database_password: ${{ secrets.MONGODB_DATABASE_PASSWORD }}
         run: terraform apply -auto-approve
 
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push all images to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          echo "=== 1. Building and pushing Backend ==="
+          docker build -t $REGISTRY/petshop-backend:$IMAGE_TAG ./backend
+          docker push $REGISTRY/petshop-backend:$IMAGE_TAG
+
+          echo "=== 2. Building and pushing Frontend ==="
+          docker build -t $REGISTRY/petshop-frontend:$IMAGE_TAG ./frontend
+          docker push $REGISTRY/petshop-frontend:$IMAGE_TAG
+
+          echo "=== 3. Building and pushing Nginx ==="
+          docker build -t $REGISTRY/petshop-nginx:$IMAGE_TAG ./nginx
+          docker push $REGISTRY/petshop-nginx:$IMAGE_TAG
+
 # jobs:
 #   deploy:
 #     name: Build, Push and Deploy
