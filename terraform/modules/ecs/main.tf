@@ -134,11 +134,6 @@ resource "aws_ecs_service" "nginx" {
 
   launch_type = "FARGATE"
 
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "attribute:ecs.availability-zone"
-  }
-
   load_balancer {
     target_group_arn = var.target_group_arn
     container_name   = "nginx"
@@ -160,11 +155,6 @@ resource "aws_ecs_service" "frontend" {
   desired_count = 0
 
   launch_type = "FARGATE"
-
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "attribute:ecs.availability-zone"
-  }
 
   network_configuration {
     subnets          = var.private_subnet_ids
@@ -188,11 +178,6 @@ resource "aws_ecs_service" "backend" {
 
   launch_type = "FARGATE"
 
-  ordered_placement_strategy {
-    type  = "spread"
-    field = "attribute:ecs.availability-zone"
-  }
-
   network_configuration {
     subnets          = var.private_subnet_ids
     security_groups  = [var.ecs_security_group_id]
@@ -203,7 +188,7 @@ resource "aws_ecs_service" "backend" {
   registry_arn   = aws_service_discovery_service.backend.arn
   container_name = "backend"
   container_port = 5000
-}
+  }
 }
 
 # 1. Private DNS Namespace
@@ -226,10 +211,6 @@ resource "aws_service_discovery_service" "frontend" {
 
     routing_policy = "MULTIVALUE"
   }
-
-  health_check_custom_config {
-    failure_threshold = 1
-  }
 }
 
 # 3. Backend Service Discovery
@@ -245,9 +226,5 @@ resource "aws_service_discovery_service" "backend" {
     }
 
     routing_policy = "MULTIVALUE"
-  }
-
-  health_check_custom_config {
-    failure_threshold = 1
   }
 }
