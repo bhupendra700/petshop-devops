@@ -50,35 +50,35 @@ module "ecr" {
   project_name = var.project_name
 }
 
-# module "ecs" {
-#   source = "../modules/ecs"
+module "ecs" {
+  source = "../modules/ecs"
 
-#   project_name       = var.project_name
-#   vpc_id = module.vpc.vpc_id
-#   execution_role_arn = module.iam.ecs_task_execution_role_arn
+  project_name       = var.project_name
+  vpc_id = module.vpc.vpc_id
+  execution_role_arn = module.iam.ecs_task_execution_role_arn
 
-#   private_subnet_ids    = module.vpc.private_subnet_ids
-#   ecs_security_group_id = module.security_group.ecs_security_group_id
+  private_subnet_ids    = module.vpc.private_subnet_ids
+  ecs_security_group_id = module.security_group.ecs_security_group_id
 
-#   nginx_image    = "${module.ecr.nginx_repository_url}:latest"
-#   frontend_image = "${module.ecr.frontend_repository_url}:latest"
-#   backend_image  = "${module.ecr.backend_repository_url}:latest"
+  nginx_image    = "${module.ecr.nginx_repository_url}:latest"
+  frontend_image = "${module.ecr.frontend_repository_url}:latest"
+  backend_image  = "${module.ecr.backend_repository_url}:latest"
 
-#   backend_secret_arn = module.mongodb-secret-manager.backend_secret_arn
+  backend_secret_arn = module.mongodb-secret-manager.backend_secret_arn
 
-#   target_group_arn = module.alb.target_group_arn
-# }
+  target_group_arn = module.alb.target_group_arn
+}
 
-# module "alb" {
-#   source = "../modules/alb"
+module "alb" {
+  source = "../modules/alb"
 
-#   project_name       = var.project_name
-#   vpc_id             = module.vpc.vpc_id
-#   deployment_type    = "ecs"
-#   public_subnet_ids  = module.vpc.public_subnet_ids
-#   alb_security_group = module.security_groups.alb_sg_id
-#   domain_name        = "bhupendrayadav.me"
-# }
+  project_name       = var.project_name
+  vpc_id             = module.vpc.vpc_id
+  deployment_type    = "ecs"
+  public_subnet_ids  = module.vpc.public_subnet_ids
+  alb_security_group = module.security_groups.alb_sg_id
+  domain_name        = "bhupendrayadav.me"
+}
 
 module "mongodb" {
   source = "../modules/mongodb"
