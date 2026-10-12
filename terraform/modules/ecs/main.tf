@@ -134,9 +134,7 @@ resource "aws_ecs_service" "nginx" {
 
   launch_type = "FARGATE"
 
-  depends_on = [
-    module.alb.aws_lb_listener.https_front_end
-  ]
+  depends_on = [module.alb.https_listener]
 
   load_balancer {
     target_group_arn = var.target_group_arn
@@ -167,9 +165,9 @@ resource "aws_ecs_service" "frontend" {
   }
 
   service_registries {
-  registry_arn   = aws_service_discovery_service.frontend.arn
-  container_name = "frontend"
-  # container_port = 3000
+    registry_arn   = aws_service_discovery_service.frontend.arn
+    container_name = "frontend"
+    # container_port = 3000
   }
 }
 
@@ -189,9 +187,9 @@ resource "aws_ecs_service" "backend" {
   }
 
   service_registries {
-  registry_arn   = aws_service_discovery_service.backend.arn
-  container_name = "backend"
-  # container_port = 5000
+    registry_arn   = aws_service_discovery_service.backend.arn
+    container_name = "backend"
+    # container_port = 5000
   }
 }
 
