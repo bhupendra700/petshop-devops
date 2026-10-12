@@ -53,6 +53,8 @@ module "ecr" {
 module "ecs" {
   source = "../modules/ecs"
 
+  depends_on = [module.alb]
+  
   project_name       = var.project_name
   vpc_id = module.vpc.vpc_id
   execution_role_arn = module.iam.ecs_task_execution_role_arn

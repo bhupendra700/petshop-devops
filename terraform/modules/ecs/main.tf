@@ -134,8 +134,6 @@ resource "aws_ecs_service" "nginx" {
 
   launch_type = "FARGATE"
 
-  depends_on = [module.alb]
-
   load_balancer {
     target_group_arn = var.target_group_arn
     container_name   = "nginx"
