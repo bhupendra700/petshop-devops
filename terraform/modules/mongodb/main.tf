@@ -35,6 +35,7 @@ resource "mongodbatlas_database_user" "this" {
 
 resource "mongodbatlas_project_ip_access_list" "app_servers" {
   project_id = var.project_id
-  cidr_block = "${var.nat_eips[0]}/32"
+  # cidr_block = "${var.nat_eips[0]}/32"
+  cidr_block = length(var.nat_eips) > 0 && var.nat_eips[0] != "" ? "${var.nat_eips[0]}/32" : "0.0.0.0/0"
   comment    = "PetShop NAT Gateway"
 }
