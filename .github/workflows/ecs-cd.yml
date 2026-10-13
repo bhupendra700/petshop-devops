@@ -58,19 +58,28 @@ jobs:
       - name: Build, tag, and push all images to Amazon ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "=== 1. Building and pushing Backend ==="
-          docker build -t $REGISTRY/petshop-backend:$IMAGE_TAG ./backend
-          docker push $REGISTRY/petshop-backend:$IMAGE_TAG
+          docker build -t $REGISTRY/petshop-backend:latest ./backend
+          docker push $REGISTRY/petshop-backend:latest
 
           echo "=== 2. Building and pushing Frontend ==="
-          docker build -t $REGISTRY/petshop-frontend:$IMAGE_TAG ./frontend
-          docker push $REGISTRY/petshop-frontend:$IMAGE_TAG
+          docker build -t $REGISTRY/petshop-frontend:latest ./frontend
+          docker push $REGISTRY/petshop-frontend:latest
 
           echo "=== 3. Building and pushing Nginx ==="
-          docker build -f ./nginx/Dockerfile.ecs -t $REGISTRY/petshop-nginx:$IMAGE_TAG ./nginx
-          docker push $REGISTRY/petshop-nginx:$IMAGE_TAG
+          docker build -f ./nginx/Dockerfile.ecs -t $REGISTRY/petshop-nginx:latest ./nginx
+          docker push $REGISTRY/petshop-nginx:latest
+
+      - name: Start ECS services
+        run: |
+          aws ecs update-service --cluster $ECS_CLUSTER --service petshop-nginx --desired-count 1 --force-new-deployment
+          aws ecs update-service --cluster $ECS_CLUSTER --service petshop-frontend --desired-count 1 --force-new-deployment
+          aws ecs update-service --cluster $ECS_CLUSTER --service petshop-backend --desired-count 1 --force-new-deployment
+
+      - name: Wait for services to stabilize
+        run: |
+          aws ecs wait services-stable --cluster $ECS_CLUSTER --services petshop-nginx petshop-frontend petshop-backend
 
 # jobs:
 #   deploy:
