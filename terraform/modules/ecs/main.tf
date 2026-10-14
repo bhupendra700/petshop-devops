@@ -25,6 +25,15 @@ resource "aws_ecs_task_definition" "nginx" {
           protocol      = "tcp"
         }
       ]
+
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-region"        = "us-east-1"
+          "awslogs-stream-prefix" = "nginx"
+        }
+      }
     }
   ])
 }
@@ -52,6 +61,15 @@ resource "aws_ecs_task_definition" "frontend" {
           protocol      = "tcp"
         }
       ]
+
+       logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-region"        = "us-east-1"
+          "awslogs-stream-prefix" = "frontend"
+        }
+      }
     }
   ])
 }
@@ -121,6 +139,15 @@ resource "aws_ecs_task_definition" "backend" {
           valueFrom = "${var.backend_secret_arn}:MONGO_URI::"
         }
       ]
+
+       logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-region"        = "us-east-1"
+          "awslogs-stream-prefix" = "backend"
+        }
+      }
     }
   ])
 }
@@ -227,4 +254,9 @@ resource "aws_service_discovery_service" "backend" {
 
     routing_policy = "MULTIVALUE"
   }
+}
+
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/${var.project_name}"
+  retention_in_days = 7
 }
