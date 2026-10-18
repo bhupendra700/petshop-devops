@@ -66,7 +66,7 @@ resource "aws_lb_target_group" "target_group_for_alb" {
     timeout             = 5
     protocol            = "HTTP"
     port                = "traffic-port"
-    path                = "/"
+    path                = "/health"
     matcher             = "200"
   }
 }

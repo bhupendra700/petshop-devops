@@ -44,8 +44,8 @@ resource "aws_ecs_task_definition" "frontend" {
 
   network_mode = "awsvpc"
 
-  cpu    = "256"
-  memory = "512"
+  cpu    = "1024"
+  memory = "2048"
 
   execution_role_arn = var.execution_role_arn
 
@@ -156,6 +156,7 @@ resource "aws_ecs_service" "nginx" {
   name            = "${var.project_name}-nginx"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.nginx.arn
+  health_check_grace_period_seconds = 120
 
   desired_count = 0
 
