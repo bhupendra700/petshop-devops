@@ -39,7 +39,15 @@ resource "aws_security_group" "ecs" {
   description = "Security group for PetShop ECS tasks"
   vpc_id      = var.vpc_id
 
-    ingress {
+  ingress {
+    description     = "Traffic from ALB"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+
+  ingress {
     description = "nginx to frontend"
     from_port   = 3000
     to_port     = 3000
