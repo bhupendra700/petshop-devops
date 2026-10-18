@@ -95,6 +95,12 @@ module "mongodb" {
   nat_eips = module.vpc.nat_addresses
 }
 
+module "petshop_app_s3" {
+  source         = "./modules/s3"
+  s3_bucket_name = "petshop-app-assets-bucket"
+  is_public      = true
+}
+
 module "mongodb-secret-manager" {
   source = "../modules/secret-manager"
 
