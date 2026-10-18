@@ -96,7 +96,7 @@ module "mongodb" {
 }
 
 module "petshop_app_s3" {
-  source         = "./modules/s3"
+  source         = "../modules/s3"
   s3_bucket_name = "petshop-app-assets-bucket"
   is_public      = true
 }
