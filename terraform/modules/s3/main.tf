@@ -17,7 +17,6 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = var.is_public ? false : true
 }
 
-# Sirf tabhi policy lagegi jab is_public = true hoga
 resource "aws_s3_bucket_policy" "public_policy" {
   count  = var.is_public ? 1 : 0
   bucket = aws_s3_bucket.s3_bucket.id
@@ -40,6 +39,7 @@ resource "aws_s3_bucket_policy" "public_policy" {
   })
 }
 
+//ECS task execution
 resource "aws_iam_role" "app_s3_access" {
   name = "${var.project_name}-app-s3-access-role"
 
