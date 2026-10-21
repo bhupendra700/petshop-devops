@@ -76,8 +76,8 @@ resource "aws_iam_role_policy" "app_s3_access" {
           "s3:ListBucket"
         ]
         Resource = [
-          s3_bucket.arn,
-          "${s3_bucket.arn}/*"
+          aws_s3_bucket.s3_bucket.arn,
+          "${aws_s3_bucket.s3_bucket.arn}/*"
         ]
       }
     ]
