@@ -20,7 +20,7 @@ resource "aws_s3_bucket_public_access_block" "this" {
 # Sirf tabhi policy lagegi jab is_public = true hoga
 resource "aws_s3_bucket_policy" "public_policy" {
   count  = var.is_public ? 1 : 0
-  bucket = aws_s3_bucket.this.id
+  bucket = aws_s3_bucket.s3_bucket.id
 
   depends_on = [
     aws_s3_bucket_public_access_block.this
@@ -34,7 +34,7 @@ resource "aws_s3_bucket_policy" "public_policy" {
         Effect    = "Allow"
         Principal = "*"
         Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.this.arn}/*"
+        Resource  = "${aws_s3_bucket.s3_bucket.arn}/*"
       }
     ]
   })
