@@ -69,6 +69,8 @@ module "ecs" {
   backend_secret_arn = module.mongodb-secret-manager.backend_secret_arn
 
   target_group_arn = module.alb.target_group_arn
+
+  s3_bucket_arn = module.petshop_app_s3.bucket_arn
 }
 
 module "alb" {

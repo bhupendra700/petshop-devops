@@ -6,3 +6,8 @@ variable "is_public" {
   type    = bool
   default = false
 }
+
+variable "project_name" {
+  type    = string
+  default = "petshop"
+}

@@ -83,6 +83,7 @@ resource "aws_ecs_task_definition" "backend" {
   memory = "512"
 
   execution_role_arn = var.execution_role_arn
+  task_role_arn = var.s3_bucket_arn
 
   container_definitions = jsonencode([
     {
