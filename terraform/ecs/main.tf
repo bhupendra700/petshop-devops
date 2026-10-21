@@ -70,7 +70,7 @@ module "ecs" {
 
   target_group_arn = module.alb.target_group_arn
 
-  s3_bucket_arn = module.petshop_app_s3.bucket_arn
+  app_s3_access_role_arn = module.petshop_app_s3.app_s3_role_arn
 }
 
 module "alb" {

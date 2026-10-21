@@ -41,6 +41,6 @@ variable "vpc_id" {
   type = string
 }
 
-variable "s3_bucket_arn" {
+variable "app_s3_access_role_arn" {
   type = string
 }
