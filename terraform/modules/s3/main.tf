@@ -8,7 +8,7 @@ resource "aws_s3_bucket" "s3_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {
-  bucket = aws_s3_bucket.this.id
+  bucket = aws_s3_bucket.s3_bucket.id
 
   # Public bucket (App) ke liye false, Private (Ansible) ke liye true
   block_public_acls       = var.is_public ? false : true
