@@ -44,6 +44,45 @@ module "security_groups" {
   deployment_type = "ecs"
 }
 
+module "alb" {
+  source = "../modules/alb"
+
+  project_name       = var.project_name
+  vpc_id             = module.vpc.vpc_id
+  deployment_type    = "ecs"
+  public_subnet_ids  = module.vpc.public_subnet_ids
+  alb_security_group = module.security_groups.alb_sg_id
+  domain_name        = "bhupendrayadav.me"
+}
+
+module "petshop_app_s3" {
+  source         = "../modules/s3"
+  s3_bucket_name = "petshop-app-assets-bucket"
+  is_public      = true
+}
+
+module "mongodb" {
+  source = "../modules/mongodb"
+
+  project_id   = var.atlas_project_id
+  cluster_name = "petshop-prod"
+  region       = "US_EAST_1"
+
+  database_username = var.mongodb_database_username
+  database_password = var.mongodb_database_password
+
+  nat_eips = module.vpc.nat_addresses
+
+  secret_name = "petshop/prod/backend"
+}
+
+# module "mongodb-secret-manager" {
+#   source = "../modules/secret-manager"
+
+#   secret_name = "petshop/prod/backend"
+#   mongodb_uri = module.mongodb.connection_string
+# }
+
 module "ecr" {
   source = "../modules/ecr"
 
@@ -71,48 +110,4 @@ module "ecs" {
   target_group_arn = module.alb.target_group_arn
 
   app_s3_access_role_arn = module.petshop_app_s3.app_s3_role_arn
-}
-
-module "alb" {
-  source = "../modules/alb"
-
-  project_name       = var.project_name
-  vpc_id             = module.vpc.vpc_id
-  deployment_type    = "ecs"
-  public_subnet_ids  = module.vpc.public_subnet_ids
-  alb_security_group = module.security_groups.alb_sg_id
-  domain_name        = "bhupendrayadav.me"
-}
-
-module "mongodb" {
-  source = "../modules/mongodb"
-
-  project_id   = var.atlas_project_id
-  cluster_name = "petshop-prod"
-  region       = "US_EAST_1"
-
-  database_username = var.mongodb_database_username
-  database_password = var.mongodb_database_password
-
-  nat_eips = module.vpc.nat_addresses
-}
-
-module "petshop_app_s3" {
-  source         = "../modules/s3"
-  s3_bucket_name = "petshop-app-assets-bucket"
-  is_public      = true
-}
-
-module "mongodb-secret-manager" {
-  source = "../modules/secret-manager"
-
-  secret_name = "petshop/prod/backend"
-  mongodb_uri = module.mongodb.connection_string
-}
-
-module "iam" {
-  source = "../modules/iam"
-
-  project_name       = var.project_name
-  backend_secret_arn = module.mongodb-secret-manager.backend_secret_arn
 }

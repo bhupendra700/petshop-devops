@@ -39,7 +39,7 @@ resource "aws_s3_bucket_policy" "public_policy" {
   })
 }
 
-//ECS task execution
+//ECS s3 access permission role
 resource "aws_iam_role" "app_s3_access" {
   name = "${var.project_name}-app-s3-access-role"
 
@@ -83,36 +83,3 @@ resource "aws_iam_role_policy" "app_s3_access" {
     ]
   })
 }
-
-# resource "aws_iam_role_policy" "ecs_task_s3" {
-#   name = "${var.project_name}-ecs-task-s3-policy"
-#   role = aws_iam_role.ecs_task.id
-
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-
-#     Statement = [
-#       {
-#         Effect = "Allow"
-
-#         Action = [
-#           "secretsmanager:GetSecretValue"
-#         ]
-
-#         Resource = "arn:aws:secretsmanager:us-east-1:226395400494:secret:petshop/prod/backend-PXxPkm"
-#       },
-#       {
-#         Effect = "Allow"
-
-#         Action = [
-#           "s3:*"
-#         ]
-
-#         Resource = [
-#           var.s3_bucket_arn,
-#           "${var.s3_bucket_arn}/*"
-#         ]
-#       }
-#     ]
-#   })
-# }

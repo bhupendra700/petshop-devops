@@ -24,3 +24,7 @@ variable "database_password" {
 variable "nat_eips" {
   type = list(string)
 }
+
+variable "secret_name" {
+  type = string
+}

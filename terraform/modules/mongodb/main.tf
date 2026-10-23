@@ -35,7 +35,35 @@ resource "mongodbatlas_database_user" "this" {
 
 resource "mongodbatlas_project_ip_access_list" "app_servers" {
   project_id = var.project_id
-  # cidr_block = "${var.nat_eips[0]}/32"
   cidr_block = length(var.nat_eips) > 0 && var.nat_eips[0] != "" ? "${var.nat_eips[0]}/32" : "0.0.0.0/0"
   comment    = "PetShop NAT Gateway"
+}
+
+data "aws_secretsmanager_secret" "backend" {
+  name = var.secret_name
+}
+
+data "aws_secretsmanager_secret_version" "backend" {
+  secret_id = data.aws_secretsmanager_secret.backend.id
+}
+
+resource "aws_secretsmanager_secret_version" "backend" {
+  secret_id = data.aws_secretsmanager_secret.backend.id
+
+  secret_string = jsonencode(
+    merge(
+      jsondecode(data.aws_secretsmanager_secret_version.backend.secret_string),
+      {
+        MONGO_URI = format(
+          "mongodb+srv://%s:%s@%s/petshop",
+          urlencode(var.database_username),
+          urlencode(var.database_password),
+          trimprefix(
+            mongodbatlas_advanced_cluster.this.connection_strings.standard_srv,
+            "mongodb+srv://"
+          )
+        )
+      }
+    )
+  )
 }
