@@ -96,7 +96,6 @@ module "ecs" {
   
   project_name       = var.project_name
   vpc_id = module.vpc.vpc_id
-  execution_role_arn = module.iam.ecs_task_execution_role_arn
 
   private_subnet_ids    = module.vpc.private_subnet_ids
   ecs_security_group_id = module.security_groups.ecs_security_group_id
@@ -105,7 +104,7 @@ module "ecs" {
   frontend_image = "${module.ecr.frontend_repository_url}:latest"
   backend_image  = "${module.ecr.backend_repository_url}:latest"
 
-  backend_secret_arn = module.mongodb-secret-manager.backend_secret_arn
+  backend_secret_arn = module.mongodb.backend_secret_arn
 
   target_group_arn = module.alb.target_group_arn
 
